@@ -12,6 +12,7 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         AuthenticationManager authManager =  AuthenticationManager.getInstance();
+        ScheduleManager scheduleManager = new ScheduleManager();
 
         System.out.print("Enter username: ");
         String username = scanner.nextLine();
@@ -22,29 +23,156 @@ public class Main {
             System.out.println("Authentication successful!");
             
             if ("root".equals(username)) {
-                System.out.println("Welcome, Admin. Do you want to invite a new user? (yes/no)");
-                String response = scanner.nextLine();
-                if ("yes".equalsIgnoreCase(response)) {
-                    System.out.print("Enter the email of the new user: ");
-                    String email = scanner.nextLine();
-                    System.out.print("Enter a temporary password for the new user: ");
-                    String tempPassword = scanner.nextLine();
-                    System.out.println("Invitation sent to " + email + " with password " + tempPassword);
-                }
+                String command;
+                do {
+                    System.out.println("\nAdmin Menu:");
+                    System.out.println("1. Invite User");
+                    System.out.println("2. Manage Users");
+                    System.out.println("3. Manage Shifts");
+                    System.out.println("4. Generate Report");
+                    System.out.println("5. Exit");
+                    System.out.print("Enter command: ");
+                    command = scanner.nextLine();
+
+                    switch (command) {
+                        case "1":
+                            System.out.print("Enter the email of the new user: ");
+                            String email = scanner.nextLine();
+                            System.out.print("Enter a temporary password for the new user: ");
+                            String tempPassword = scanner.nextLine();
+                            authManager.inviteUser(email, tempPassword);
+                            System.out.println("Invitation sent to " + email);
+                            break;
+                        case "2":
+                            manageUsers(scanner, authManager);
+                            break;
+                        case "3":
+                            manageShifts(scanner, authManager, scheduleManager);
+                            break;
+                        case "4":
+                            generateReport(authManager, scheduleManager);
+                            break;
+                        case "5":
+                            System.out.println("Exiting admin menu.");
+                            break;
+                        default:
+                            System.out.println("Invalid command. Please try again.");
+                            break;
+                    }
+                } while (!"5".equals(command));
+            } else {
+                System.out.println("Access denied. Admins only.");
             }
-
-            // Continue with the rest of the application
-            ScheduleManager scheduleManager = new ScheduleManager();
-            Employee employee = new Employee("E001", "John Doe");
-            scheduleManager.createShift(LocalDateTime.of(2024, 5, 20, 9, 0), LocalDateTime.of(2024, 5, 20, 17, 0), employee);
-
-            scheduleManager.getSchedule().getShifts().forEach(shift -> {
-                System.out.println("Shift: " + shift.startTime + " to " + shift.endTime + " for " + shift.employee.name);
-            });
         } else {
             System.out.println("Authentication failed. Exiting...");
         }
 
         scanner.close();
+    }
+
+    private static void manageUsers(Scanner scanner, AuthenticationManager authManager) {
+        String command;
+        do {
+            System.out.println("\nManage Users:");
+            System.out.println("1. Assign Role");
+            System.out.println("2. Delete User");
+            System.out.println("3. Update User");
+            System.out.println("4. Back");
+            System.out.print("Enter command: ");
+            command = scanner.nextLine();
+
+            switch (command) {
+                case "1":
+                    System.out.print("Enter the email of the user: ");
+                    String email = scanner.nextLine();
+                    System.out.print("Enter the new role: ");
+                    String role = scanner.nextLine();
+                    authManager.assignRole(email, role);
+                    break;
+                case "2":
+                    System.out.print("Enter the email of the user: ");
+                    String emailToDelete = scanner.nextLine();
+                    authManager.deleteUser(emailToDelete);
+                    break;
+                case "3":
+                    System.out.print("Enter the email of the user: ");
+                    String emailToUpdate = scanner.nextLine();
+                    System.out.print("Enter the new name of the user: ");
+                    String newName = scanner.nextLine();
+                    authManager.updateUser(emailToUpdate, newName);
+                    break;
+                case "4":
+                    System.out.println("Returning to admin menu.");
+                    break;
+                default:
+                    System.out.println("Invalid command. Please try again.");
+                    break;
+            }
+        } while (!"4".equals(command));
+    }
+
+    private static void manageShifts(Scanner scanner, AuthenticationManager authManager, ScheduleManager scheduleManager) {
+        String command;
+        do {
+            System.out.println("\nManage Shifts:");
+            System.out.println("1. Add Shift");
+            System.out.println("2. Update Shift");
+            System.out.println("3. Back");
+            System.out.print("Enter command: ");
+            command = scanner.nextLine();
+
+            switch (command) {
+                case "1":
+                    System.out.print("Enter the email of the employee: ");
+                    String email = scanner.nextLine();
+                    Employee employee = authManager.getEmployee(email);
+                    if (employee == null) {
+                        System.out.println("Employee not found.");
+                        break;
+                    }
+                    System.out.print("Enter start time (YYYY-MM-DDTHH:MM): ");
+                    LocalDateTime startTime = LocalDateTime.parse(scanner.nextLine());
+                    System.out.print("Enter end time (YYYY-MM-DDTHH:MM): ");
+                    LocalDateTime endTime = LocalDateTime.parse(scanner.nextLine());
+                    scheduleManager.createShift(startTime, endTime, employee);
+                    System.out.println("Shift added successfully.");
+                    break;
+                case "2":
+                    System.out.print("Enter the shift index to update: ");
+                    int shiftIndex = Integer.parseInt(scanner.nextLine());
+                    System.out.print("Enter the email of the new employee: ");
+                    String newEmail = scanner.nextLine();
+                    Employee newEmployee = authManager.getEmployee(newEmail);
+                    if (newEmployee == null) {
+                        System.out.println("Employee not found.");
+                        break;
+                    }
+                    System.out.print("Enter new start time (YYYY-MM-DDTHH:MM): ");
+                    LocalDateTime newStartTime = LocalDateTime.parse(scanner.nextLine());
+                    System.out.print("Enter new end time (YYYY-MM-DDTHH:MM): ");
+                    LocalDateTime newEndTime = LocalDateTime.parse(scanner.nextLine());
+                    scheduleManager.updateShift(shiftIndex, newStartTime, newEndTime, newEmployee);
+                    System.out.println("Shift updated successfully.");
+                    break;
+                case "3":
+                    System.out.println("Returning to admin menu.");
+                    break;
+                default:
+                    System.out.println("Invalid command. Please try again.");
+                    break;
+            }
+        } while (!"3".equals(command));
+    }
+
+    private static void generateReport(AuthenticationManager authManager, ScheduleManager scheduleManager) {
+        System.out.println("\nReport:");
+        System.out.println("Users and their roles:");
+        for (Employee employee : authManager.employeeDatabase.values()) {
+            System.out.println("Email: " + employee.getId() + ", Name: " + employee.getName() + ", Role: " + employee.getRole());
+        }
+        System.out.println("\nShifts:");
+        scheduleManager.getSchedule().getShifts().forEach(shift -> {
+            System.out.println("Shift: " + shift.startTime + " to " + shift.endTime + " for " + shift.employee.name);
+        });
     }
 }
