@@ -1,15 +1,16 @@
 package assignment;
 
 public class Employee {
-	
-	public String id;
-    public String name;
+    private String id;
+    private String name;
+    private String password;
     private String role;
 
-    public Employee(String id, String name) {
+    public Employee(String id, String name, String password, String role) {
         this.id = id;
         this.name = name;
-        this.role = "user";
+        this.password = password;
+        this.role = role;
     }
 
     public String getId() {
@@ -20,15 +21,19 @@ public class Employee {
         return name;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
     public String getRole() {
         return role;
     }
 
-    public void setRole(String role) {
-        this.role = role;
-    }
-
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

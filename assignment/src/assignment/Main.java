@@ -1,17 +1,12 @@
 package assignment;
 
-//import assignment.Authentication;
-//import assignment.ScheduleManager;
-//import assignment.Employee;
-//import assignment.Shift;
-
 import java.time.LocalDateTime;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        AuthenticationManager authManager =  AuthenticationManager.getInstance();
+        AuthenticationManager authManager = AuthenticationManager.getInstance();
         ScheduleManager scheduleManager = new ScheduleManager();
 
         System.out.print("Enter username: ");
@@ -21,53 +16,100 @@ public class Main {
 
         if (authManager.authenticate(username, password)) {
             System.out.println("Authentication successful!");
-            
-            if ("root".equals(username)) {
-                String command;
-                do {
-                    System.out.println("\nAdmin Menu:");
-                    System.out.println("1. Invite User");
-                    System.out.println("2. Manage Users");
-                    System.out.println("3. Manage Shifts");
-                    System.out.println("4. Generate Report");
-                    System.out.println("5. Exit");
-                    System.out.print("Enter command: ");
-                    command = scanner.nextLine();
+            Employee loggedInUser = authManager.getEmployee(username);
 
-                    switch (command) {
-                        case "1":
-                            System.out.print("Enter the email of the new user: ");
-                            String email = scanner.nextLine();
-                            System.out.print("Enter a temporary password for the new user: ");
-                            String tempPassword = scanner.nextLine();
-                            authManager.inviteUser(email, tempPassword);
-                            System.out.println("Invitation sent to " + email);
-                            break;
-                        case "2":
-                            manageUsers(scanner, authManager);
-                            break;
-                        case "3":
-                            manageShifts(scanner, authManager, scheduleManager);
-                            break;
-                        case "4":
-                            generateReport(authManager, scheduleManager);
-                            break;
-                        case "5":
-                            System.out.println("Exiting admin menu.");
-                            break;
-                        default:
-                            System.out.println("Invalid command. Please try again.");
-                            break;
-                    }
-                } while (!"5".equals(command));
+            if ("root".equals(username)) {
+                adminMenu(scanner, authManager, scheduleManager);
             } else {
-                System.out.println("Access denied. Admins only.");
+                userMenu(scanner, loggedInUser, scheduleManager);
             }
         } else {
             System.out.println("Authentication failed. Exiting...");
         }
 
         scanner.close();
+    }
+
+    private static void adminMenu(Scanner scanner, AuthenticationManager authManager, ScheduleManager scheduleManager) {
+        String command;
+        do {
+            System.out.println("\nAdmin Menu:");
+            System.out.println("1. Invite User");
+            System.out.println("2. Manage Users");
+            System.out.println("3. Manage Shifts");
+            System.out.println("4. Generate Report");
+            System.out.println("5. Logout");
+            System.out.print("Enter command: ");
+            command = scanner.nextLine();
+
+            switch (command) {
+                case "1":
+                    System.out.print("Enter the username of the new user: ");
+                    String email = scanner.nextLine();
+                    System.out.print("Enter a temporary password for the new user: ");
+                    String tempPassword = scanner.nextLine();
+                    authManager.inviteUser(email, tempPassword);
+                    System.out.println("Invitation sent to " + email);
+                    break;
+                case "2":
+                    manageUsers(scanner, authManager);
+                    break;
+                case "3":
+                    manageShifts(scanner, authManager, scheduleManager);
+                    break;
+                case "4":
+                    generateReport(authManager, scheduleManager);
+                    break;
+                case "5":
+                    System.out.println("Logging out...");
+                    break;
+                default:
+                    System.out.println("Invalid command. Please try again.");
+                    break;
+            }
+        } while (!"5".equals(command));
+    }
+
+    private static void userMenu(Scanner scanner, Employee loggedInUser, ScheduleManager scheduleManager) {
+        String command;
+        do {
+            System.out.println("\nUser Menu:");
+            System.out.println("1. View Shifts");
+            System.out.println("2. Start Shift");
+            System.out.println("3. End Shift");
+            System.out.println("4. View Role");
+            System.out.println("5. Logout");
+            System.out.print("Enter command: ");
+            command = scanner.nextLine();
+
+            switch (command) {
+                case "1":
+                    scheduleManager.getShiftsForEmployee(loggedInUser).forEach(shift ->
+                            System.out.println("Shift: " + shift.startTime + " to " + shift.endTime));
+                    break;
+                case "2":
+                    System.out.print("Enter start time (YYYY-MM-DDTHH:MM): ");
+                    LocalDateTime startTime = LocalDateTime.parse(scanner.nextLine());
+                    System.out.print("Enter end time (YYYY-MM-DDTHH:MM): ");
+                    LocalDateTime endTime = LocalDateTime.parse(scanner.nextLine());
+                    scheduleManager.createShift(startTime, endTime, loggedInUser);
+                    System.out.println("Shift started.");
+                    break;
+                case "3":
+                    System.out.println("Ending current shift...");
+                    // Implementation to end the shift for the user
+                    break;
+                case "4":
+                    System.out.println("Role: " + loggedInUser.getRole());
+                    break;
+                case "5":
+                    System.out.println("Logging out...");
+                    break;
+                default:
+                    System.out.println("Invalid command. Please try again.");
+                    break;
+            }
+        } while (!"5".equals(command));
     }
 
     private static void manageUsers(Scanner scanner, AuthenticationManager authManager) {
@@ -171,8 +213,8 @@ public class Main {
             System.out.println("Email: " + employee.getId() + ", Name: " + employee.getName() + ", Role: " + employee.getRole());
         }
         System.out.println("\nShifts:");
-        scheduleManager.getSchedule().getShifts().forEach(shift -> {
-            System.out.println("Shift: " + shift.startTime + " to " + shift.endTime + " for " + shift.employee.name);
+        scheduleManager.getShifts().forEach(shift -> {
+            System.out.println("Shift: " + shift.startTime + " to " + shift.endTime + " for " + shift.employee.getName());
         });
     }
 }
