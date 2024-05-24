@@ -22,6 +22,7 @@ public class Designation extends Employee {
     public static void main(String[] args) {
         // Example usage
         Designation employee = new Designation("1", "Santosh Panta", "Developer");
+        employee.setName("Amit Basnet Employee");
         System.out.println("Employee ID: " + employee.getId());
         System.out.println("Employee Name: " + employee.getName());
         System.out.println("Employee Role: " + employee.getRole());
