@@ -18,7 +18,6 @@ public class Main {
 
         if (authManager.authenticate(username, password)) {
             System.out.println("Authentication successful!");
-<<<<<<< HEAD
             
             if ("root".equals(username)) {
                 String command;
@@ -65,12 +64,10 @@ public class Main {
                             break;
                     }
                 } while (!"5".equals(command));
-=======
             Employee loggedInUser = authManager.getEmployee(username);
 
             if ("root".equals(username)) {
                 adminMenu(scanner, authManager, scheduleManager);
->>>>>>> d8c8c5c2fe265a078028de6e8c364d46e6e16254
             } else {
                 userMenu(scanner, loggedInUser, scheduleManager);
             }
