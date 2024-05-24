@@ -7,7 +7,7 @@ public class Availability extends Employee {
 
     // Constructor
     public Availability(String id, String name, String startTime, String endTime, String availableDate) {
-        super(id, name);
+        super(id, name,"","");
         this.startTime = startTime;
         this.endTime = endTime;
         this.availableDate = availableDate;

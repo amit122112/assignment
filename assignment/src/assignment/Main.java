@@ -9,7 +9,7 @@ public class Main {
         AuthenticationManager authManager = AuthenticationManager.getInstance();
         ScheduleManager scheduleManager = new ScheduleManager();
         Designation designation = new Designation("1", "Santosh Panta", "Developer");
-        Availability availability = new Availability("1", "Amit", "9 am","6 pm","June 6");
+        Availability availability = new Availability("1", "Amit", "9 am", "6 pm", "June 6");
 
         System.out.print("Enter username: ");
         String username = scanner.nextLine();
@@ -18,7 +18,7 @@ public class Main {
 
         if (authManager.authenticate(username, password)) {
             System.out.println("Authentication successful!");
-            
+
             if ("root".equals(username)) {
                 String command;
                 do {
@@ -49,10 +49,10 @@ public class Main {
                             manageShifts(scanner, authManager, scheduleManager);
                             break;
                         case "4":
-                        	manageDesignation(scanner, authManager, designation);
+                            manageDesignation(scanner, authManager, designation);
                             break;
                         case "5":
-                        	manageAvailability(scanner, authManager, availability);
+                            manageAvailability(scanner, authManager, availability);
                         case "6":
                             generateReport(authManager, scheduleManager);
                             break;
@@ -64,18 +64,19 @@ public class Main {
                             break;
                     }
                 } while (!"5".equals(command));
-            Employee loggedInUser = authManager.getEmployee(username);
+                Employee loggedInUser = authManager.getEmployee(username);
 
-            if ("root".equals(username)) {
-                adminMenu(scanner, authManager, scheduleManager);
+                if ("root".equals(username)) {
+                    adminMenu(scanner, authManager, scheduleManager);
+                } else {
+                    userMenu(scanner, loggedInUser, scheduleManager);
+                }
             } else {
-                userMenu(scanner, loggedInUser, scheduleManager);
+                System.out.println("Authentication failed. Exiting...");
             }
-        } else {
-            System.out.println("Authentication failed. Exiting...");
-        }
 
-        scanner.close();
+            scanner.close();
+        }
     }
 
     private static void adminMenu(Scanner scanner, AuthenticationManager authManager, ScheduleManager scheduleManager) {
@@ -132,8 +133,8 @@ public class Main {
 
             switch (command) {
                 case "1":
-                    scheduleManager.getShiftsForEmployee(loggedInUser).forEach(shift ->
-                            System.out.println("Shift: " + shift.startTime + " to " + shift.endTime));
+                    scheduleManager.getShiftsForEmployee(loggedInUser)
+                            .forEach(shift -> System.out.println("Shift: " + shift.startTime + " to " + shift.endTime));
                     break;
                 case "2":
                     System.out.print("Enter start time (YYYY-MM-DDTHH:MM): ");
@@ -201,7 +202,8 @@ public class Main {
         } while (!"4".equals(command));
     }
 
-    private static void manageShifts(Scanner scanner, AuthenticationManager authManager, ScheduleManager scheduleManager) {
+    private static void manageShifts(Scanner scanner, AuthenticationManager authManager,
+            ScheduleManager scheduleManager) {
         String command;
         do {
             System.out.println("\nManage Shifts:");
@@ -253,7 +255,7 @@ public class Main {
             }
         } while (!"3".equals(command));
     }
-    
+
     private static void manageDesignation(Scanner scanner, AuthenticationManager authManager, Designation designation) {
         String command;
         do {
@@ -271,12 +273,12 @@ public class Main {
                     System.out.println(designation.getDesignation());
                     break;
                 case "2":
-                	 System.out.print("Enter the email of the employee: ");
-                     String useremail = scanner.nextLine();
-                     System.out.print("Enter the new designation of the employee: ");
-                     String newDesignation = scanner.nextLine();
-                     designation.setDesignation(newDesignation);
-                 
+                    System.out.print("Enter the email of the employee: ");
+                    String useremail = scanner.nextLine();
+                    System.out.print("Enter the new designation of the employee: ");
+                    String newDesignation = scanner.nextLine();
+                    designation.setDesignation(newDesignation);
+
                     System.out.println("designation updated successfully.");
                     break;
                 case "3":
@@ -288,8 +290,9 @@ public class Main {
             }
         } while (!"3".equals(command));
     }
-    
-    private static void manageAvailability(Scanner scanner, AuthenticationManager authManager, Availability availability) {
+
+    private static void manageAvailability(Scanner scanner, AuthenticationManager authManager,
+            Availability availability) {
         String command;
         do {
             System.out.println("\nManage Availability:");
@@ -308,16 +311,16 @@ public class Main {
                     System.out.println("Date: " + availability.getAvailableDate());
                     break;
                 case "2":
-                	 System.out.print("Enter the Start Time: ");
-                     String startTime = scanner.nextLine();
-                     System.out.print("Enter the End Time: ");
-                     String endTime = scanner.nextLine();
-                     System.out.print("Enter the Available date: ");
-                     String newAvaiability = scanner.nextLine();
-                     availability.setStartTime(startTime);
-                     availability.setEndTime(endTime);
-                     availability.setAvailableDate(newAvaiability);
-                 
+                    System.out.print("Enter the Start Time: ");
+                    String startTime = scanner.nextLine();
+                    System.out.print("Enter the End Time: ");
+                    String endTime = scanner.nextLine();
+                    System.out.print("Enter the Available date: ");
+                    String newAvaiability = scanner.nextLine();
+                    availability.setStartTime(startTime);
+                    availability.setEndTime(endTime);
+                    availability.setAvailableDate(newAvaiability);
+
                     System.out.println("Avaiability updated successfully.");
                     break;
                 case "3":
@@ -334,11 +337,13 @@ public class Main {
         System.out.println("\nReport:");
         System.out.println("Users and their roles:");
         for (Employee employee : authManager.employeeDatabase.values()) {
-            System.out.println("Email: " + employee.getId() + ", Name: " + employee.getName() + ", Role: " + employee.getRole());
+            System.out.println(
+                    "Email: " + employee.getId() + ", Name: " + employee.getName() + ", Role: " + employee.getRole());
         }
         System.out.println("\nShifts:");
         scheduleManager.getShifts().forEach(shift -> {
-            System.out.println("Shift: " + shift.startTime + " to " + shift.endTime + " for " + shift.employee.getName());
+            System.out
+                    .println("Shift: " + shift.startTime + " to " + shift.endTime + " for " + shift.employee.getName());
         });
     }
 }
