@@ -8,8 +8,8 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         AuthenticationManager authManager = AuthenticationManager.getInstance();
         ScheduleManager scheduleManager = new ScheduleManager();
-        Designation designation = new Designation("1", "Santosh Panta", "Developer");
-        Availability availability = new Availability("1", "Amit", "9 am", "6 pm", "June 6");
+        Designation designation = new Designation("", "", "");
+        Availability availability = new Availability("", "", "", "", "");
 
         System.out.print("Enter username: ");
         String username = scanner.nextLine();
@@ -19,13 +19,59 @@ public class Main {
         if (authManager.authenticate(username, password)) {
             System.out.println("Authentication successful!");
 
+            if ("root".equals(username)) {
+                String command;
+                do {
+                    System.out.println("\nAdmin Menu:");
+                    System.out.println("1. Invite User");
+                    System.out.println("2. Manage Users");
+                    System.out.println("3. Manage Shifts");
+                    System.out.println("4. Manage Designation");
+                    System.out.println("5. Manage Availability");
+                    System.out.println("6. Generate Report");
+                    System.out.println("7. Exit");
+                    System.out.print("Enter command: ");
+                    command = scanner.nextLine();
+
+                    switch (command) {
+                        case "1":
+                            System.out.print("Enter the email of the new user: ");
+                            String email = scanner.nextLine();
+                            System.out.print("Enter a temporary password for the new user: ");
+                            String tempPassword = scanner.nextLine();
+                            authManager.inviteUser(email, tempPassword);
+                            System.out.println("Invitation sent to " + email);
+                            break;
+                        case "2":
+                            manageUsers(scanner, authManager);
+                            break;
+                        case "3":
+                            manageShifts(scanner, authManager, scheduleManager);
+                            break;
+                        case "4":
+                            manageDesignation(scanner, authManager, designation);
+                            break;
+                        case "5":
+                            manageAvailability(scanner, authManager, availability);
+                        case "6":
+                            generateReport(authManager, scheduleManager);
+                            break;
+                        case "7":
+                            System.out.println("Exiting admin menu.");
+                            break;
+                        default:
+                            System.out.println("Invalid command. Please try again.");
+                            break;
+                    }
+                } while (!"5".equals(command));
                 Employee loggedInUser = authManager.getEmployee(username);
 
                 if ("root".equals(username)) {
-                    adminMenu(scanner, authManager, scheduleManager, designation, availability);
-                } else if ("user".equals(username)){
-                    userMenu(scanner, loggedInUser, scheduleManager);
+                    adminMenu(scanner, authManager, scheduleManager);
                 } else {
+                    userMenu(scanner, loggedInUser, scheduleManager);
+                }
+            } else {
                 System.out.println("Authentication failed. Exiting...");
             }
 
@@ -33,49 +79,42 @@ public class Main {
         }
     }
 
-    private static void adminMenu(Scanner scanner, AuthenticationManager authManager, ScheduleManager scheduleManager, Designation designation, Availability availability) {
+    private static void adminMenu(Scanner scanner, AuthenticationManager authManager, ScheduleManager scheduleManager) {
         String command;
         do {
-        	 System.out.println("\nAdmin Menu:");
-             System.out.println("1. Invite User");
-             System.out.println("2. Manage Users");
-             System.out.println("3. Manage Shifts");
-             System.out.println("4. Manage Designation");
-             System.out.println("5. Manage Availability");
-             System.out.println("6. Generate Report");
-             System.out.println("7. Exit");
-             System.out.print("Enter command: ");
-             command = scanner.nextLine();
+            System.out.println("\nAdmin Menu:");
+            System.out.println("1. Invite User");
+            System.out.println("2. Manage Users");
+            System.out.println("3. Manage Shifts");
+            System.out.println("4. Generate Report");
+            System.out.println("5. Logout");
+            System.out.print("Enter command: ");
+            command = scanner.nextLine();
 
-             switch (command) {
-                 case "1":
-                     System.out.print("Enter the email of the new user: ");
-                     String email = scanner.nextLine();
-                     System.out.print("Enter a temporary password for the new user: ");
-                     String tempPassword = scanner.nextLine();
-                     authManager.inviteUser(email, tempPassword);
-                     System.out.println("Invitation sent to " + email);
-                     break;
-                 case "2":
-                     manageUsers(scanner, authManager);
-                     break;
-                 case "3":
-                     manageShifts(scanner, authManager, scheduleManager);
-                     break;
-                 case "4":
-                     manageDesignation(scanner, authManager, designation);
-                     break;
-                 case "5":
-                     manageAvailability(scanner, authManager, availability);
-                 case "6":
-                     generateReport(authManager, scheduleManager);
-                     break;
-                 case "7":
-                     System.out.println("Exiting admin menu.");
-                     break;
-                 default:
-                     System.out.println("Invalid command. Please try again.");
-                     break;
+            switch (command) {
+                case "1":
+                    System.out.print("Enter the username of the new user: ");
+                    String email = scanner.nextLine();
+                    System.out.print("Enter a temporary password for the new user: ");
+                    String tempPassword = scanner.nextLine();
+                    authManager.inviteUser(email, tempPassword);
+                    System.out.println("Invitation sent to " + email);
+                    break;
+                case "2":
+                    manageUsers(scanner, authManager);
+                    break;
+                case "3":
+                    manageShifts(scanner, authManager, scheduleManager);
+                    break;
+                case "4":
+                    generateReport(authManager, scheduleManager);
+                    break;
+                case "5":
+                    System.out.println("Logging out...");
+                    break;
+                default:
+                    System.out.println("Invalid command. Please try again.");
+                    break;
             }
         } while (!"5".equals(command));
     }
@@ -229,8 +268,17 @@ public class Main {
 
             switch (command) {
                 case "1":
-                    System.out.print("Enter the email of the employee: ");
-                    String email = scanner.nextLine();
+                	System.out.print("Enter the email of the employee: ");
+                	String username = scanner.nextLine();
+
+                	if (username.equals("santosh")) {  
+                	    String newDesignation = "Software Engineer";
+                	    designation.setDesignation(newDesignation);
+                	} else if (username.equals("amit")) {
+                	    String newDesignation = "Manager";
+                	    designation.setDesignation(newDesignation);
+                	}
+                    
                     System.out.println(designation.getDesignation());
                     break;
                 case "2":
@@ -267,6 +315,18 @@ public class Main {
                 case "1":
                     System.out.print("Enter the email of the employee: ");
                     String email = scanner.nextLine();
+        
+                	if (email.equals("santosh")) {  
+                		availability.setStartTime("9 Am");
+                        availability.setEndTime("6 Pm");
+                        availability.setAvailableDate("June 2");
+                	    
+                	} else if (email.equals("amit")) {
+                		availability.setStartTime("10 Am");
+                        availability.setEndTime("5 Pm");
+                        availability.setAvailableDate("June 10");
+                	    
+                	}
                     System.out.println("Start Time: " + availability.getStartTime());
                     System.out.println("End Time: " + availability.getEndTime());
                     System.out.println("Date: " + availability.getAvailableDate());

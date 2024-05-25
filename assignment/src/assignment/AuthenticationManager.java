@@ -11,6 +11,8 @@ public class AuthenticationManager {
         // Adding a default admin user
         employeeDatabase.put("root", new Employee("root", "admin@admin.com", "root", "Admin"));
         employeeDatabase.put("user", new Employee("user","user@user.com","user","User"));
+        employeeDatabase.put("santosh", new Employee("santosh","santosh@user.com","santosh","User"));
+        employeeDatabase.put("amit", new Employee("amit","amit@user.com","amit","User"));
     }
 
     public static AuthenticationManager getInstance() {
@@ -21,6 +23,7 @@ public class AuthenticationManager {
     }
 
     public boolean authenticate(String username, String password) {
+   
         Employee employee = employeeDatabase.get(username);
         return employee != null && employee.getPassword().equals(password);
     }
