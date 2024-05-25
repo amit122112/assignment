@@ -8,8 +8,9 @@ public class AuthenticationManager {
     Map<String, Employee> employeeDatabase = new HashMap<>();
 
     private AuthenticationManager() {
-        // Adding a default admin user
+        // Adding a default admin
         employeeDatabase.put("root", new Employee("root", "admin@admin.com", "root", "Admin"));
+        // Adding a default user
         employeeDatabase.put("user", new Employee("user","user@user.com","user","User"));
         employeeDatabase.put("santosh", new Employee("santosh","santosh@user.com","santosh","User"));
         employeeDatabase.put("amit", new Employee("amit","amit@user.com","amit","User"));

@@ -116,7 +116,7 @@ public class Main {
                     System.out.println("Invalid command. Please try again.");
                     break;
             }
-        } while (!"5".equals(command));
+        } while (!"7".equals(command));
     }
 
     private static void userMenu(Scanner scanner, Employee loggedInUser, ScheduleManager scheduleManager) {
@@ -363,8 +363,7 @@ public class Main {
         }
         System.out.println("\nShifts:");
         scheduleManager.getShifts().forEach(shift -> {
-            System.out
-                    .println("Shift: " + shift.startTime + " to " + shift.endTime + " for " + shift.employee.getName());
+            System.out.println("Shift: " + shift.startTime + " to " + shift.endTime + " for " + shift.employee.getName());
         });
     }
 }

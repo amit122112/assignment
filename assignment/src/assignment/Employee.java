@@ -1,6 +1,6 @@
 package assignment;
 
-public class Employee {
+public class Employee implements Person {
     private String id;
     private String name;
     private String password;
