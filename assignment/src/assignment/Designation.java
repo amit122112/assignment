@@ -5,7 +5,7 @@ public class Designation extends Employee {
 
     // Constructor
     public Designation(String id, String name, String designation) {
-        super(id, name); // Call the constructor of Employee
+        super(id, name,"",""); // Call the constructor of Employee
         this.designation = designation;
     }
 

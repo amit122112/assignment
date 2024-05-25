@@ -8,8 +8,6 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         AuthenticationManager authManager = AuthenticationManager.getInstance();
         ScheduleManager scheduleManager = new ScheduleManager();
-        Designation designation = new Designation("1", "Santosh Panta", "Developer");
-        Availability availability = new Availability("1", "Amit", "9 am","6 pm","June 6");
 
         System.out.print("Enter username: ");
         String username = scanner.nextLine();
@@ -18,60 +16,11 @@ public class Main {
 
         if (authManager.authenticate(username, password)) {
             System.out.println("Authentication successful!");
-<<<<<<< HEAD
-            
-            if ("root".equals(username)) {
-                String command;
-                do {
-                    System.out.println("\nAdmin Menu:");
-                    System.out.println("1. Invite User");
-                    System.out.println("2. Manage Users");
-                    System.out.println("3. Manage Shifts");
-                    System.out.println("4. Manage Designation");
-                    System.out.println("5. Manage Availability");
-                    System.out.println("6. Generate Report");
-                    System.out.println("7. Exit");
-                    System.out.print("Enter command: ");
-                    command = scanner.nextLine();
-
-                    switch (command) {
-                        case "1":
-                            System.out.print("Enter the email of the new user: ");
-                            String email = scanner.nextLine();
-                            System.out.print("Enter a temporary password for the new user: ");
-                            String tempPassword = scanner.nextLine();
-                            authManager.inviteUser(email, tempPassword);
-                            System.out.println("Invitation sent to " + email);
-                            break;
-                        case "2":
-                            manageUsers(scanner, authManager);
-                            break;
-                        case "3":
-                            manageShifts(scanner, authManager, scheduleManager);
-                            break;
-                        case "4":
-                        	manageDesignation(scanner, authManager, designation);
-                            break;
-                        case "5":
-                        	manageAvailability(scanner, authManager, availability);
-                        case "6":
-                            generateReport(authManager, scheduleManager);
-                            break;
-                        case "7":
-                            System.out.println("Exiting admin menu.");
-                            break;
-                        default:
-                            System.out.println("Invalid command. Please try again.");
-                            break;
-                    }
-                } while (!"5".equals(command));
-=======
             Employee loggedInUser = authManager.getEmployee(username);
 
             if ("root".equals(username)) {
                 adminMenu(scanner, authManager, scheduleManager);
->>>>>>> d8c8c5c2fe265a078028de6e8c364d46e6e16254
-            } else {
+            } else if ("user".equals(username)){
                 userMenu(scanner, loggedInUser, scheduleManager);
             }
         } else {
@@ -89,7 +38,9 @@ public class Main {
             System.out.println("2. Manage Users");
             System.out.println("3. Manage Shifts");
             System.out.println("4. Generate Report");
-            System.out.println("5. Logout");
+            System.out.println("5. Manage Designation");
+            System.out.println("6. Manage Availability");
+            System.out.println("7. Logout");
             System.out.print("Enter command: ");
             command = scanner.nextLine();
 
@@ -110,8 +61,12 @@ public class Main {
                     break;
                 case "4":
                     generateReport(authManager, scheduleManager);
-                    break;
                 case "5":
+                    manageDesignation(scanner, authManager, designation);
+                case "6":
+                    manageAvailability(scanner, authManager, availability);
+                    break;
+                case "7":
                     System.out.println("Logging out...");
                     break;
                 default:
@@ -274,12 +229,12 @@ public class Main {
                     System.out.println(designation.getDesignation());
                     break;
                 case "2":
-                	 System.out.print("Enter the email of the employee: ");
-                     String useremail = scanner.nextLine();
-                     System.out.print("Enter the new designation of the employee: ");
-                     String newDesignation = scanner.nextLine();
-                     designation.setDesignation(newDesignation);
-                 
+                    System.out.print("Enter the email of the employee: ");
+                    String useremail = scanner.nextLine();
+                    System.out.print("Enter the new designation of the employee: ");
+                    String newDesignation = scanner.nextLine();
+                    designation.setDesignation(newDesignation);
+
                     System.out.println("designation updated successfully.");
                     break;
                 case "3":
@@ -291,7 +246,7 @@ public class Main {
             }
         } while (!"3".equals(command));
     }
-    
+
     private static void manageAvailability(Scanner scanner, AuthenticationManager authManager, Availability availability) {
         String command;
         do {
@@ -311,16 +266,16 @@ public class Main {
                     System.out.println("Date: " + availability.getAvailableDate());
                     break;
                 case "2":
-                	 System.out.print("Enter the Start Time: ");
-                     String startTime = scanner.nextLine();
-                     System.out.print("Enter the End Time: ");
-                     String endTime = scanner.nextLine();
-                     System.out.print("Enter the Available date: ");
-                     String newAvaiability = scanner.nextLine();
-                     availability.setStartTime(startTime);
-                     availability.setEndTime(endTime);
-                     availability.setAvailableDate(newAvaiability);
-                 
+                    System.out.print("Enter the Start Time: ");
+                    String startTime = scanner.nextLine();
+                    System.out.print("Enter the End Time: ");
+                    String endTime = scanner.nextLine();
+                    System.out.print("Enter the Available date: ");
+                    String newAvaiability = scanner.nextLine();
+                    availability.setStartTime(startTime);
+                    availability.setEndTime(endTime);
+                    availability.setAvailableDate(newAvaiability);
+
                     System.out.println("Avaiability updated successfully.");
                     break;
                 case "3":
